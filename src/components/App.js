@@ -51,7 +51,9 @@ export default class App extends React.PureComponent {
                     {(this.state.files.length > 0) ?
                         <React.Fragment>
                             <ul className="list-group text-left mb-4">
-                                {this.state.files.map((file, index) => <li key={index} className="list-group-item p-2">{file.name} <span className="text-secondary">(-{this.sizeInMegaBytes(file.size)})</span></li>)}
+                                {this.state.files.map((file, index) => <li key={index} className="list-group-item p-2">
+                                    {file.name} <span className="text-secondary">(-{this.sizeInMegaBytes(file.size)})</span>
+                                </li>)}
                             </ul>
                             <div>
                                 <button type="submit" className="btn btn-success mr-2">Encrypt</button>
