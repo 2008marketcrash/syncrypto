@@ -1,9 +1,9 @@
 import React from "react";
+import Magic from "../utilities/Magic";
 import Config from "../utilities/Config";
 import { Redirect, Link } from "react-router-dom";
 
 export default class Encrypt extends React.PureComponent {
-
     constructor(props) {
         super(props);
         this.toggleShowPassword = this.toggleShowPassword.bind(this);
@@ -13,7 +13,8 @@ export default class Encrypt extends React.PureComponent {
         this.state = {
             showPassword: false,
             password: "",
-            retypePassword: ""
+            retypePassword: "",
+            working: false
         };
     }
 
@@ -39,19 +40,23 @@ export default class Encrypt extends React.PureComponent {
     }
 
     encrypt() {
-
+        Magic.setStateWithPromise(this, { working: true })
+            .then(() => { })
+            .then(() => Magic.setStateWithPromise(this, { password: "", retypePassword: "" }))
+            .then(() => { })
+            .catch(error => Magic.setStateWithPromise(this, { working: false, error }));
     }
 
     render() {
         const showPassword = this.state.showPassword;
         const passwordScore = this.scorePassword(this.state.password);
         const passwordCheck = (showPassword || this.state.password === this.state.retypePassword);
-        return (this.props.files.length === 0) ? <form onSubmit={e => e.preventDefault()}>
+        return (this.props.files.length > 0) ? <form onSubmit={e => e.preventDefault()}>
             <h4 className="mb-4">Choose a strong password.</h4>
             <div className="input-group">
                 <input required autoFocus maxLength={Config.maxPasswordLength} type={(showPassword) ? "text" : "password"} className="form-control" placeholder="Type password" value={this.state.password} onChange={this.handleChange} name="password" />
                 <div className="input-group-append">
-                    <button className={"btn " + ((showPassword) ? "btn-success" : "btn-danger")} type="button" onClick={this.toggleShowPassword}>{(showPassword) ? "Hide" : "Show"}</button>
+                    <button tabIndex="-1" className={"btn " + ((showPassword) ? "btn-success" : "btn-danger")} type="button" onClick={this.toggleShowPassword}>{(showPassword) ? "Hide" : "Show"}</button>
                 </div>
             </div>
             {(showPassword) ? null :

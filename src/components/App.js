@@ -1,6 +1,6 @@
 import React from "react";
 import { FaCloud, FaHeart, FaLock } from "react-icons/lib/fa";
-import { HashRouter, Route, Switch, Redirect } from "react-router-dom";
+import { HashRouter, Route, Switch, Redirect, Link } from "react-router-dom";
 import FileSelect from "./FileSelect";
 import Encrypt from "./Encrypt";
 
@@ -9,8 +9,7 @@ export default class App extends React.PureComponent {
         super(props);
         this.selectFiles = this.selectFiles.bind(this);
         this.state = {
-            files: [],
-            error: ""
+            files: []
         };
     }
 
@@ -37,8 +36,9 @@ export default class App extends React.PureComponent {
                             <Route exact path="/file_select" render={() => <FileSelect files={this.state.files} selectFiles={this.selectFiles} />} />
                             <Route exact path="/encrypt" render={() => <Encrypt files={this.state.files} />} />
                             <Route render={() => <div>
-                                <div><span style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
-                                <div>You're not supposed to be on this page!</div>
+                                <div className="mb-2"><span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
+                                <div className="mb-4">You're not supposed to be on this page!</div>
+                                <Link to="/"><button className="btn btn-light">Home</button></Link>
                             </div>} />
                         </Switch>
                     </div>
