@@ -13,4 +13,14 @@ export default class FileUtilities {
             return (sizeInBytes / GB).toFixed(2) + " GB";
         }
     }
+
+    static readFile(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onerror = (error) => { reject(error); };
+            reader.onabort = () => { reject("File reading aborted!"); };
+            reader.onload = (event) => { resolve(event.target.result); };
+            reader.readAsArrayBuffer(file);
+        });
+    }
 }

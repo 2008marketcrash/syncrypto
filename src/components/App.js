@@ -8,6 +8,7 @@ export default class App extends React.PureComponent {
     constructor(props) {
         super(props);
         this.selectFiles = this.selectFiles.bind(this);
+
         this.state = {
             files: []
         };
