@@ -3,6 +3,7 @@ export default {
     maxNumberOfFiles: 25,
     maxPasswordLength: 64,
     encoding: "UTF-8",
+    fileExtension: "syncrypto",
     key: {
         type: "raw",
         name: "PBKDF2",

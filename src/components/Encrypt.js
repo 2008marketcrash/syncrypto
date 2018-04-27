@@ -75,22 +75,20 @@ export default class Encrypt extends React.PureComponent {
             })
             .then(key => {
                 const encryptedFiles = [];
-                files.forEach(file => {
-                    encryptedFiles.push(FileUtilities.readFile(file).then(data => new Uint8Array(window.crypto.subtle.encrypt(
-                        {
-                            name: Config.algorithm.name,
-                            iv: window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize)),
-                            tagLength: Config.algorithm.tagLength
-                        },
-                        key,
-                        new Uint8Array(Config.algorithm.ivSize)
-                    ))));
-                });
+                files.forEach(file => encryptedFiles.push(FileUtilities.readFileAsBase64String(file).then(data => window.crypto.subtle.encrypt(
+                    {
+                        name: Config.algorithm.name,
+                        iv: window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize)),
+                        tagLength: Config.algorithm.tagLength
+                    },
+                    key,
+                    new TextEncoder(Config.encoding).encode(data)
+                ))));
                 return Promise.all(encryptedFiles);
             })
-            .then(encryptedFiles => {
-                encryptedFiles.forEach(encryptedFile => console.log(new TextDecoder(Config.encoding).decode(encryptedFile)));
-            })
+            .then(encryptedFiles => encryptedFiles.forEach((encryptedFile, index) => {
+                FileUtilities.saveBase64StringAsFile(`${files[index].name}.${Config.fileExtension}`, btoa(new Uint8Array(encryptedFile)));
+            }))
             .catch(error => Magic.setStateWithPromise(this, { working: false, error: error.toString() }));
     }
 
