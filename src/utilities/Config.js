@@ -1,6 +1,5 @@
 export default {
-    maxFileSize: 1024 * 1024 * 25,
-    maxNumberOfFiles: 25,
+    maxFileSize: 1024 * 1024 * 128,
     maxPasswordLength: 64,
     encoding: "UTF-8",
     fileExtension: "syncrypto",

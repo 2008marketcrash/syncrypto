@@ -1,3 +1,5 @@
+import Config from "./Config";
+
 export default class FileUtilities {
     static sizeString(sizeInBytes) {
         const KB = 1024;
@@ -14,18 +16,18 @@ export default class FileUtilities {
         }
     }
 
-    static readFileAsBase64String(file) {
+    static readFile(file) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onerror = (error) => { reject(error); };
             reader.onabort = () => { reject("File reading aborted!"); };
-            reader.onload = (event) => { resolve(btoa(new Uint8Array(event.target.result))); };
+            reader.onload = (event) => { resolve(new TextDecoder(Config.encoding).decode(event.target.result)); };
             reader.readAsArrayBuffer(file);
         });
     }
 
-    static saveBase64StringAsFile(fileName, base64String) {
-        const url = window.URL.createObjectURL(new Blob([base64String], { type: "application/octet-stream" }));
+    static saveStringAsFile(fileName, fileString) {
+        const url = window.URL.createObjectURL(new Blob([fileString], { type: "application/octet-stream" }));
         const a = document.createElement("a");
         a.style = "display:none";
         document.body.appendChild(a);

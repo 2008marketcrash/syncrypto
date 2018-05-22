@@ -17,7 +17,8 @@ export default class Encrypt extends React.PureComponent {
             showPassword: false,
             password: "",
             retypePassword: "",
-            working: false
+            working: false,
+            error: ""
         };
     }
 
@@ -33,7 +34,7 @@ export default class Encrypt extends React.PureComponent {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.encrypt(this.props.files);
+        this.encrypt(this.props.file);
     }
 
     scorePassword(password) {
@@ -47,7 +48,7 @@ export default class Encrypt extends React.PureComponent {
         return ((lengthScore + hasUpperCase + hasLowerCase + hasNumbers + hasSymbols) / 8) * 100;
     }
 
-    encrypt(files) {
+    encrypt(file) {
         return Magic.setStateWithPromise(this, { working: true })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,
@@ -73,51 +74,59 @@ export default class Encrypt extends React.PureComponent {
                         Config.algorithm.options.encrypt
                     ));
             })
-            .then(key => {
-                const encryptedFiles = [];
-                files.forEach(file => encryptedFiles.push(FileUtilities.readFileAsBase64String(file).then(data => window.crypto.subtle.encrypt(
-                    {
-                        name: Config.algorithm.name,
-                        iv: window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize)),
-                        tagLength: Config.algorithm.tagLength
-                    },
-                    key,
-                    new TextEncoder(Config.encoding).encode(data)
-                ))));
-                return Promise.all(encryptedFiles);
-            })
-            .then(encryptedFiles => encryptedFiles.forEach((encryptedFile, index) => {
-                FileUtilities.saveBase64StringAsFile(`${files[index].name}.${Config.fileExtension}`, btoa(new Uint8Array(encryptedFile)));
-            }))
-            .catch(error => Magic.setStateWithPromise(this, { working: false, error: error.toString() }));
+            .then(key => FileUtilities.readFile(file).then(data => window.crypto.subtle.encrypt(
+                {
+                    name: Config.algorithm.name,
+                    iv: window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize)),
+                    tagLength: Config.algorithm.tagLength
+                },
+                key,
+                new TextEncoder(Config.encoding).encode(data)
+            )))
+            .then(encryptedFile => FileUtilities.saveStringAsFile(`${file.name}.${Config.fileExtension}`, new TextDecoder(Config.encoding).decode(encryptedFile)))
+            .then(() => this.props.selectFile(null))
+            .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
+            .then(() => Magic.setStateWithPromise(this, { working: false }));
     }
 
     render() {
-        const showPassword = this.state.showPassword;
+        const { showPassword, working, done } = this.state;
         const passwordScore = this.scorePassword(this.state.password);
-        const passwordCheck = (showPassword || this.state.password === this.state.retypePassword);
-        return (this.props.files.length > 0) ? <form onSubmit={this.handleSubmit}>
-            {(this.state.error) ? <div className="alert alert-danger">{this.state.error}</div> : null}
-            <h4 className="mb-4">Choose a strong password.</h4>
-            <div className="input-group">
-                <input required autoFocus autoComplete="off" maxLength={Config.maxPasswordLength} type={(showPassword) ? "text" : "password"} className="form-control" placeholder="Type password" value={this.state.password} onChange={this.handleChange} name="password" />
-                <div className="input-group-append">
-                    <button tabIndex="-1" className={"btn " + ((showPassword) ? "btn-success" : "btn-danger")} type="button" onClick={this.toggleShowPassword}>{(showPassword) ? "Hide" : "Show"}</button>
-                </div>
-            </div>
-            {(showPassword) ? null :
-                <div className="input-group mt-2">
-                    <input required autoComplete="off" maxLength={Config.maxPasswordLength} type="password" className="form-control" placeholder="Retype password" value={this.state.retypePassword} onChange={this.handleChange} name="retypePassword" />
-                </div>}
-            <div className="progress mt-4 mb-4" style={{ height: "0.2rem" }}>
-                <div className={`progress-bar ${((passwordScore < 33.33) ? "bg-danger" : ((passwordScore < 66.67) ? "bg-warning" : "bg-success"))}`} role="progressbar" style={{ width: `${passwordScore}%` }}></div>
-            </div>
-            <div>
-                <Link to="/file_select">
-                    <button className="btn btn-light mr-2">Go back</button>
-                </Link>
-                <button disabled={!passwordCheck} type="submit" className={`btn ${(passwordCheck) ? "btn-success" : "btn-danger"}`}>{(passwordCheck) ? "Encrypt" : "Passwords do not match!"}</button>
-            </div>
-        </form> : <Redirect to="/file_select" />;
+        const passwordCheck = showPassword || this.state.password === this.state.retypePassword;
+        if (this.props.file) {
+            if (working) {
+                return <div>
+                    <h4 className="mb-4">Working...</h4>
+                    <div className="text-secondary mb-4">Go take a nap or something.<br />Or talk to this dude while you wait.</div>
+                    <span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128585;</span>
+                </div>;
+            } else {
+                return <form onSubmit={this.handleSubmit}>
+                    {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
+                    <h4 className="mb-4">Choose a strong password.</h4>
+                    <div className="input-group">
+                        <input required autoFocus autoComplete="off" maxLength={Config.maxPasswordLength} type={showPassword ? "text" : "password"} className="form-control" placeholder="Type password" value={this.state.password} onChange={this.handleChange} name="password" />
+                        <div className="input-group-append">
+                            <button tabIndex="-1" className={"btn " + (showPassword ? "btn-success" : "btn-danger")} type="button" onClick={this.toggleShowPassword}>{showPassword ? "Hide" : "Show"}</button>
+                        </div>
+                    </div>
+                    {showPassword ? null :
+                        <div className="input-group mt-2">
+                            <input required autoComplete="off" maxLength={Config.maxPasswordLength} type="password" className="form-control" placeholder="Retype password" value={this.state.retypePassword} onChange={this.handleChange} name="retypePassword" />
+                        </div>}
+                    <div className="progress mt-4 mb-4" style={{ height: "0.2rem" }}>
+                        <div className={`progress-bar ${passwordScore < 33.33 ? "bg-danger" : (passwordScore < 66.67 ? "bg-warning" : "bg-success")}`} role="progressbar" style={{ width: `${passwordScore}%` }}></div>
+                    </div>
+                    <div>
+                        <Link to="/file_select">
+                            <button className="btn btn-light mr-2">Go back</button>
+                        </Link>
+                        <button disabled={!passwordCheck} type="submit" className={`btn ${passwordCheck ? "btn-success" : "btn-danger"}`}>{passwordCheck ? "Encrypt" : "Passwords do not match!"}</button>
+                    </div>
+                </form>
+            }
+        } else {
+            return <Redirect to="/" />;
+        }
     }
 }
