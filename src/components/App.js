@@ -3,6 +3,7 @@ import { FaCloud, FaHeart, FaLock } from "react-icons/lib/fa";
 import { HashRouter, Route, Switch, Redirect, Link } from "react-router-dom";
 import FileSelect from "./FileSelect";
 import Encrypt from "./Encrypt";
+import Decrypt from "./Decrypt";
 
 export default class App extends React.PureComponent {
     constructor(props) {
@@ -34,6 +35,7 @@ export default class App extends React.PureComponent {
                             <Redirect exact from="/" to="/file_select" />
                             <Route exact path="/file_select" render={() => <FileSelect file={this.state.file} selectFile={this.selectFile} />} />
                             <Route exact path="/encrypt" render={() => <Encrypt file={this.state.file} selectFile={this.selectFile} />} />
+                            <Route exact path="/decrypt" render={() => <Decrypt file={this.state.file} selectFile={this.selectFile} />} />
                             <Route render={() => <div>
                                 <div className="mb-2"><span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
                                 <div className="mb-4">You're not supposed to be on this page!</div>

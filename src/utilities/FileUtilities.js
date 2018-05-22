@@ -26,8 +26,8 @@ export default class FileUtilities {
         });
     }
 
-    static saveStringAsFile(fileName, fileString) {
-        const url = window.URL.createObjectURL(new Blob([fileString], { type: "application/octet-stream" }));
+    static saveStringAsFile(fileName, fileString, salt = "", iv = "") {
+        const url = window.URL.createObjectURL(new Blob([fileString, salt, iv], { type: "application/octet-stream" }));
         const a = document.createElement("a");
         a.style = "display:none";
         document.body.appendChild(a);
