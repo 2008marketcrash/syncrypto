@@ -23,7 +23,7 @@ export default class FileSelect extends React.PureComponent {
                             <p className="card-text">
                                 Size: <span className={file.size > Config.maxFileSize ? "text-danger" : "text-success"}>{FileUtilities.sizeString(file.size)}</span>
                                 <br />
-                                Type: <span className="text-secondary">{file.type || `Unknown (.${file.name.split(".").pop()})`}</span>
+                                Type: <span className="text-secondary">{file.type || `${file.name.split(".").pop().toLowerCase() === Config.fileExtension ? "Syncrypto encrypted file" : "Unknown"} (.${file.name.split(".").pop()})`}</span>
                                 <br />
                                 Last modified: <span className="text-secondary">{file.lastModifiedDate.toLocaleString()}</span>
                             </p>
