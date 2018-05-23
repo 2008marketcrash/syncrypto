@@ -4,10 +4,6 @@ import FileUtilities from "../utilities/FileUtilities";
 import Config from "../utilities/Config";
 
 export default class FileSelect extends React.PureComponent {
-    potato() {
-        throw "Oh no";
-    }
-
     render() {
         const { file } = this.props;
         const isFileValid = file && file.size <= Config.maxFileSize;
@@ -29,7 +25,7 @@ export default class FileSelect extends React.PureComponent {
                                 <br />
                                 Type: <span className="text-secondary">{file.type || `${file.name.split(".").pop().toLowerCase() === Config.fileExtension ? "Syncrypto encrypted file" : "Unknown"} (.${file.name.split(".").pop()})`}</span>
                                 <br />
-                                Last modified: <span className="text-secondary">{this.potato()}</span>
+                                Last modified: <span className="text-secondary">{new Date(file.lastModified).toLocaleString()}</span>
                             </p>
                         </div>
                     </div>
