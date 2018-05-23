@@ -16,18 +16,34 @@ export default class FileUtilities {
         }
     }
 
-    static readFile(file) {
+    static readFile(file, withSaltAndIv = false) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onerror = (error) => { reject(error); };
             reader.onabort = () => { reject("File reading aborted!"); };
-            reader.onload = (event) => { resolve(new TextDecoder(Config.encoding).decode(event.target.result)); };
+            reader.onload = (event) => {
+                const { result } = event.target;
+                const fileSize = result.byteLength;
+                if (withSaltAndIv) {
+                    const { saltSize } = Config.key;
+                    const { ivSize } = Config.algorithm;
+                    resolve({
+                        data: result.slice(0, fileSize - saltSize - ivSize),
+                        salt: result.slice(fileSize - saltSize - ivSize, fileSize - ivSize),
+                        iv: result.slice(fileSize - ivSize)
+                    });
+                } else {
+                    resolve({
+                        data: result
+                    });
+                }
+            };
             reader.readAsArrayBuffer(file);
         });
     }
 
-    static saveStringAsFile(fileName, fileString, salt = "", iv = "") {
-        const url = window.URL.createObjectURL(new Blob([fileString, salt, iv], { type: "application/octet-stream" }));
+    static saveFile(fileName, data, salt = [], iv = []) {
+        const url = window.URL.createObjectURL(new Blob([data, salt, iv], { type: "application/octet-stream" }));
         const a = document.createElement("a");
         a.style = "display:none";
         document.body.appendChild(a);
