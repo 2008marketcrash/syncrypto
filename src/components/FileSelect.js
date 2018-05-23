@@ -4,6 +4,10 @@ import FileUtilities from "../utilities/FileUtilities";
 import Config from "../utilities/Config";
 
 export default class FileSelect extends React.PureComponent {
+    potato() {
+        throw "Oh no";
+    }
+
     render() {
         const { file } = this.props;
         const isFileValid = file && file.size <= Config.maxFileSize;
@@ -12,7 +16,7 @@ export default class FileSelect extends React.PureComponent {
             <div className="input-group mb-4">
                 <div className="custom-file">
                     <input required type="file" className="custom-file-input" id="file-selector" onChange={e => this.props.selectFile(Array.from(e.target.files)[0])} />
-                    <label className="custom-file-label text-left" htmlFor="file-selector">{file ? file.name : "Choose a file to get started..."}</label>
+                    <label className="custom-file-label text-left text-truncate" htmlFor="file-selector">{file ? file.name : "Choose a file to get started..."}</label>
                 </div>
             </div>
             {file ?
@@ -25,7 +29,7 @@ export default class FileSelect extends React.PureComponent {
                                 <br />
                                 Type: <span className="text-secondary">{file.type || `${file.name.split(".").pop().toLowerCase() === Config.fileExtension ? "Syncrypto encrypted file" : "Unknown"} (.${file.name.split(".").pop()})`}</span>
                                 <br />
-                                Last modified: <span className="text-secondary">{file.lastModifiedDate.toLocaleString()}</span>
+                                Last modified: <span className="text-secondary">{this.potato()}</span>
                             </p>
                         </div>
                     </div>
