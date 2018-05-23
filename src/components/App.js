@@ -18,6 +18,10 @@ export default class App extends React.PureComponent {
     selectFile(file) {
         this.setState({ file });
     }
+    
+    componentDidCatch(error, info) {
+        this.setState({error, stack: info.componentStack.trim()});
+    }
 
     render() {
         return <HashRouter>
@@ -31,17 +35,23 @@ export default class App extends React.PureComponent {
                 </h1>
                 <div className="row justify-content-center mb-4">
                     <div className="col-lg-6">
-                        <Switch>
-                            <Redirect exact from="/" to="/file_select" />
-                            <Route exact path="/file_select" render={() => <FileSelect file={this.state.file} selectFile={this.selectFile} />} />
-                            <Route exact path="/encrypt" render={() => <Encrypt file={this.state.file} selectFile={this.selectFile} />} />
-                            <Route exact path="/decrypt" render={() => <Decrypt file={this.state.file} selectFile={this.selectFile} />} />
-                            <Route render={() => <div>
-                                <div className="mb-2"><span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
-                                <div className="mb-4">You're not supposed to be on this page!</div>
-                                <Link to="/"><button className="btn btn-light">Get outta here!</button></Link>
-                            </div>} />
-                        </Switch>
+                        {this.state.error ? 
+                            <div>
+                                <div className="alert alert-danger mb-4">{this.state.error}</div>
+                                <pre className="bg-light rounded p-3 text-danger text-left">{this.state.stack}</pre>
+                            </div> :
+                            <Switch>
+                                <Redirect exact from="/" to="/file_select" />
+                                <Route exact path="/file_select" render={() => <FileSelect file={this.state.file} selectFile={this.selectFile} />} />
+                                <Route exact path="/encrypt" render={() => <Encrypt file={this.state.file} selectFile={this.selectFile} />} />
+                                <Route exact path="/decrypt" render={() => <Decrypt file={this.state.file} selectFile={this.selectFile} />} />
+                                <Route render={() => <div>
+                                    <div className="mb-2"><span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
+                                    <div className="mb-4">You&quot;re not supposed to be on this page!</div>
+                                    <Link to="/"><button className="btn btn-light">Get outta here!</button></Link>
+                                </div>} />
+                            </Switch>
+                        }
                     </div>
                 </div>
             </div>
