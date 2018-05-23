@@ -22,22 +22,22 @@ export default class FileSelect extends React.PureComponent {
                             <h5 className="card-title text-truncate">{file.name}</h5>
                             <p className="card-text">
                                 Size: <span className={file.size > Config.maxFileSize ? "text-danger" : "text-success"}>{FileUtilities.sizeString(file.size)}</span>
-                                <br/>
+                                <br />
                                 Type: <span className="text-secondary">{file.type || `Unknown (.${file.name.split(".").pop()})`}</span>
-                                <br/>
+                                <br />
                                 Last modified: <span className="text-secondary">{file.lastModifiedDate.toLocaleString()}</span>
                             </p>
                         </div>
                     </div>
                     {isFileValid ?
                         <div>
-                            <Link to="/encrypt">
+                            <Link tabIndex="-1" to="/encrypt">
                                 <button type="submit" className="btn btn-success mr-2">Encrypt</button>
                             </Link>
-                            <Link to="/decrypt">
+                            <Link tabIndex="-1" to="/decrypt">
                                 <button type="submit" className="btn btn-primary">Decrypt</button>
                             </Link>
-                        </div> : 
+                        </div> :
                         <div className="alert alert-danger">The selected file is too big. The maximum allowed file size is {FileUtilities.sizeString(Config.maxFileSize)}. Please try a smaller file.</div>}
                 </React.Fragment>
                 : null}

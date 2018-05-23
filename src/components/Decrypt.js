@@ -36,7 +36,10 @@ export default class Decrypt extends React.PureComponent {
     }
 
     decrypt(file) {
+        let data, salt, iv;
         return Magic.setStateWithPromise(this, { working: true })
+            .then(() => FileUtilities.readFile(file, true))
+            .then(readFile => { data = readFile.data; salt = readFile.salt; iv = readFile.iv; })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,
                 new TextEncoder(Config.encoding).encode(btoa(this.state.password)),
@@ -48,7 +51,7 @@ export default class Decrypt extends React.PureComponent {
                     .then(() => window.crypto.subtle.deriveKey(
                         {
                             name: Config.key.name,
-                            salt: window.crypto.getRandomValues(new Uint8Array(Config.key.saltSize)),
+                            salt,
                             iterations: Config.key.iterations,
                             hash: { name: Config.key.hash }
                         },
@@ -61,16 +64,16 @@ export default class Decrypt extends React.PureComponent {
                         Config.algorithm.options.decrypt
                     ));
             })
-            .then(key => FileUtilities.readFile(file).then(data => window.crypto.subtle.decrypt(
+            .then(key => window.crypto.subtle.decrypt(
                 {
                     name: Config.algorithm.name,
-                    iv: ArrayBuffer(Config.algorithm.ivSize),
+                    iv,
                     tagLength: Config.algorithm.tagLength
                 },
                 key,
-                new TextEncoder(Config.encoding).encode(data)
-            )))
-            .then(decryptedFile => FileUtilities.saveStringAsFile("decrypted.txt", new TextDecoder(Config.encoding).decode(this.decryptedFile)))
+                data
+            ))
+            .then(decryptedFile => FileUtilities.saveFile(file.name.substring(0, file.name.lastIndexOf(".")) || `decrypted.${Config.fileExtension}`, decryptedFile))
             .then(() => this.props.selectFile(null))
             .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
             .then(() => Magic.setStateWithPromise(this, { working: false }));
@@ -96,8 +99,8 @@ export default class Decrypt extends React.PureComponent {
                         </div>
                     </div>
                     <div className="mt-4">
-                        <Link to="/file_select">
-                            <button className="btn btn-light mr-2">Go back</button>
+                        <Link tabIndex="-1" to="/file_select">
+                            <button className="btn btn-light mr-2" tabIndex="-1">Go back</button>
                         </Link>
                         <button disabled={this.state.password.length <= 0} type="submit" className="btn btn-primary">Decrypt</button>
                     </div>

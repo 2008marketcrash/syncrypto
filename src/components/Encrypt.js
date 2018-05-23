@@ -49,7 +49,12 @@ export default class Encrypt extends React.PureComponent {
     }
 
     encrypt(file) {
+        const salt = window.crypto.getRandomValues(new Uint8Array(Config.key.saltSize));
+        const iv = window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize));
+        let data;
         return Magic.setStateWithPromise(this, { working: true })
+            .then(() => FileUtilities.readFile(file, false))
+            .then(readFile => { data = readFile.data; })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,
                 new TextEncoder(Config.encoding).encode(btoa(this.state.password)),
@@ -61,7 +66,7 @@ export default class Encrypt extends React.PureComponent {
                     .then(() => window.crypto.subtle.deriveKey(
                         {
                             name: Config.key.name,
-                            salt: window.crypto.getRandomValues(new Uint8Array(Config.key.saltSize)),
+                            salt,
                             iterations: Config.key.iterations,
                             hash: { name: Config.key.hash }
                         },
@@ -74,16 +79,16 @@ export default class Encrypt extends React.PureComponent {
                         Config.algorithm.options.encrypt
                     ));
             })
-            .then(key => FileUtilities.readFile(file).then(data => window.crypto.subtle.encrypt(
+            .then(key => window.crypto.subtle.encrypt(
                 {
                     name: Config.algorithm.name,
-                    iv: window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize)),
+                    iv,
                     tagLength: Config.algorithm.tagLength
                 },
                 key,
-                new TextEncoder(Config.encoding).encode(data)
-            )))
-            .then(encryptedFile => FileUtilities.saveStringAsFile(`${file.name}.${Config.fileExtension}`, new TextDecoder(Config.encoding).decode(encryptedFile)))
+                data
+            ))
+            .then(encryptedFile => FileUtilities.saveFile(`${file.name}.${Config.fileExtension}`, encryptedFile, salt, iv))
             .then(() => this.props.selectFile(null))
             .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
             .then(() => Magic.setStateWithPromise(this, { working: false }));
@@ -118,8 +123,8 @@ export default class Encrypt extends React.PureComponent {
                         <div className={`progress-bar ${passwordScore < 33.33 ? "bg-danger" : (passwordScore < 66.67 ? "bg-warning" : "bg-success")}`} role="progressbar" style={{ width: `${passwordScore}%` }}></div>
                     </div>
                     <div className="mt-4">
-                        <Link to="/file_select">
-                            <button className="btn btn-light mr-2">Go back</button>
+                        <Link tabIndex="-1" to="/file_select">
+                            <button tabIndex="-1" className="btn btn-light mr-2">Go back</button>
                         </Link>
                         <button disabled={!passwordCheck} type="submit" className={`btn ${passwordCheck ? "btn-success" : "btn-danger"}`}>{passwordCheck ? "Encrypt" : "Passwords do not match!"}</button>
                     </div>
