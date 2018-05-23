@@ -15,13 +15,11 @@ export default {
     algorithm: {
         name: "AES-GCM",
         keySize: 256,
-        ivSize: 16,
+        ivSize: 32,
         tagLength: 128,
         options: {
             encrypt: ["encrypt"],
             decrypt: ["decrypt"]
         }
     }
-
-    // TODO more consts
 };
