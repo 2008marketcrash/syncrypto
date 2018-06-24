@@ -21,5 +21,10 @@ export default {
             encrypt: ["encrypt"],
             decrypt: ["decrypt"]
         }
+    },
+    googleDrive: {
+        developerKey: "AIzaSyDWS9YPyy86r1OE1zeYfrJzeVZMgBTt1cs",
+        clientId: "705436738304-p6q37q3s4h2s36m16tot9gab8qb6moom.apps.googleusercontent.com",
+        scope: 'https://www.googleapis.com/auth/drive.readonly'
     }
 };
