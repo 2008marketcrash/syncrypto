@@ -39,7 +39,9 @@ export default class GoogleDrivePicker extends React.PureComponent {
             if (token && token.access_token) {
                 this.createPicker(token.access_token);
             } else {
-                this.authenticate(({ access_token }) => this.createPicker(access_token));
+                // We must call "handleClick" instead of "createPicker" because of:
+                // https://github.com/google/google-api-javascript-client/issues/409
+                this.authenticate(this.handleClick);
             }
         }
     }
