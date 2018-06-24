@@ -2,18 +2,31 @@ import React from "react";
 import { Link } from "react-router-dom";
 import FileUtilities from "../utilities/FileUtilities";
 import Config from "../utilities/Config";
+import GoogleDrivePicker from "./GoogleDrivePicker";
 
 export default class FileSelect extends React.PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            error: ""
+        };
+    }
+
     render() {
         const { file } = this.props;
         const isFileValid = file && file.size <= Config.maxFileSize;
         return <form onSubmit={e => e.preventDefault()}>
             <h4 className="mb-4">Simple file encryption for the cloud.</h4>
+            {this.state.error ? <div className="mb-4 alert alert-danger">{this.state.error}</div> : null}
             <div className="input-group mb-4">
-                <div className="custom-file">
-                    <input required type="file" className="custom-file-input" id="file-selector" onChange={e => this.props.selectFile(Array.from(e.target.files)[0])} />
-                    <label className="custom-file-label text-left text-truncate" htmlFor="file-selector">{file ? file.name : "Choose a file to get started..."}</label>
+                <div className="col-8 pl-0 pr-2">
+                    <div className="custom-file">
+                        <input type="file" className="custom-file-input" id="file-selector" onChange={e => this.props.selectFile(Array.from(e.target.files)[0])} />
+                        <label className="custom-file-label text-left text-truncate" htmlFor="file-selector">{file ? file.name : "Choose a file to get started..."}</label>
+                    </div>
                 </div>
+                <GoogleDrivePicker setError={(error) => this.setState({ error })} className="col-4 pl-2 pr-0 btn btn-danger" />
             </div>
             {file ?
                 <React.Fragment>
