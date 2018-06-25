@@ -1,4 +1,5 @@
 import Config from "./Config";
+import axios from "axios";
 
 export default class FileUtilities {
     static sizeString(sizeInBytes) {
@@ -23,15 +24,8 @@ export default class FileUtilities {
             reader.onabort = () => { reject("File reading aborted!"); };
             reader.onload = (event) => {
                 const { result } = event.target;
-                const fileSize = result.byteLength;
                 if (withSaltAndIv) {
-                    const { saltSize } = Config.key;
-                    const { ivSize } = Config.algorithm;
-                    resolve({
-                        data: result.slice(0, fileSize - saltSize - ivSize),
-                        salt: result.slice(fileSize - saltSize - ivSize, fileSize - ivSize),
-                        iv: result.slice(fileSize - ivSize)
-                    });
+                    resolve(FileUtilities.extractSaltAndIvFromData(result));
                 } else {
                     resolve({
                         data: result
@@ -40,6 +34,17 @@ export default class FileUtilities {
             };
             reader.readAsArrayBuffer(file);
         });
+    }
+
+    static extractSaltAndIvFromData(data) {
+        const fileSize = data.byteLength;
+        const { saltSize } = Config.key;
+        const { ivSize } = Config.algorithm;
+        return {
+            data: data.slice(0, fileSize - saltSize - ivSize),
+            salt: data.slice(fileSize - saltSize - ivSize, fileSize - ivSize),
+            iv: data.slice(fileSize - ivSize)
+        };
     }
 
     static saveFile(fileName, data, salt = [], iv = []) {
@@ -53,4 +58,22 @@ export default class FileUtilities {
         window.URL.revokeObjectURL(url);
         a.remove();
     };
+
+    static downloadFile(file_id, access_token, withSaltAndIv = false) {
+        return axios.request({
+            method: "GET",
+            responseType: "arraybuffer",
+            url: `https://www.googleapis.com/drive/v3/files/${file_id}`,
+            params: { alt: "media" },
+            headers: { "Authorization": `Bearer ${access_token}` }
+        }).then(response => {
+            if (withSaltAndIv) {
+                return FileUtilities.extractSaltAndIvFromData(response.data);
+            } else {
+                return {
+                    data: response.data
+                };
+            }
+        })
+    }
 }
