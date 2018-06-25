@@ -29,7 +29,7 @@ export default class FileSelect extends React.PureComponent {
                 <GoogleDrivePicker
                     setError={(error) => this.setState({ error })}
                     onPick={this.props.selectFile}
-                    className="col-4 pl-2 pr-0 btn btn-danger" />
+                    className="col-4 pl-2 pr-0 btn btn-outline-primary" />
             </div>
             {file ?
                 <React.Fragment>
