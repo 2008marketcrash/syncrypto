@@ -5,10 +5,14 @@ export default class GoogleDrivePicker extends React.PureComponent {
     constructor(props) {
         super(props);
 
+        this.isGoogleApiReady = this.isGoogleApiReady.bind(this);
+        this.isGoogleAuthReady = this.isGoogleAuthReady.bind(this);
+        this.isGooglePickerReady = this.isGooglePickerReady.bind(this);
+        this.onApiLoad = this.onApiLoad.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        this.state = {
-            disabled: false
-        };
+        this.authenticate = this.authenticate.bind(this);
+        this.createPicker = this.createPicker.bind(this);
+        this.pickerCallback = this.pickerCallback.bind(this);
     }
 
     isGoogleApiReady() {
@@ -32,7 +36,6 @@ export default class GoogleDrivePicker extends React.PureComponent {
         if (!this.isGoogleApiReady()
             || !this.isGoogleAuthReady()
             || !this.isGooglePickerReady()) {
-            this.setState({ disabled: true });
             this.props.setError("Google API not loaded!");
         } else {
             const token = window.gapi.auth.getToken();
@@ -52,23 +55,45 @@ export default class GoogleDrivePicker extends React.PureComponent {
             scope: Config.googleDrive.scope
         }, (access_token) => {
             if (access_token.error) {
-                this.setState({ disabled: true });
-                this.props.setError(`Error: ${access_token.error}. ${access_token.details}.`);
+                this.props.setError(`Error: ${access_token.error}. ${access_token.details}`);
             } else {
                 callback(access_token);
             }
         });
     }
 
-    createPicker() {
-        console.log("To do.");
+    createPicker(access_token) {
+        new window.google.picker.PickerBuilder()
+            .addView(window.google.picker.ViewId.DOCS)
+            .setOAuthToken(access_token)
+            .setDeveloperKey(Config.googleDrive.developerKey)
+            .setCallback(data => this.pickerCallback(data, access_token))
+            .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
+            .build()
+            .setVisible(true);
+    }
+
+    pickerCallback(data, access_token) {
+        if (data[window.google.picker.Response.ACTION] === window.google.picker.Action.PICKED) {
+            const file = data[window.google.picker.Response.DOCUMENTS][0];
+            this.props.setError("");
+            this.props.onPick({
+                isCloud: true,
+                lastModified: file.lastEditedUtc,
+                size: file.sizeBytes,
+                type: file.mimeType,
+                name: file.name,
+                url: file.url,
+                id: file.id,
+                access_token
+            });
+        }
     }
 
     componentDidMount() {
         if (this.isGoogleApiReady()) {
             this.onApiLoad();
         } else {
-            this.setState({ disabled: true });
             this.props.setError("Google API not loaded!");
         }
     }
@@ -77,7 +102,7 @@ export default class GoogleDrivePicker extends React.PureComponent {
         return <button
             className={this.props.className}
             onClick={this.handleClick}
-            disabled={this.state.disabled}>
+            disabled={this.props.disabled}>
             Google Drive™
         </button>;
     }
