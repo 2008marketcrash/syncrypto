@@ -53,7 +53,13 @@ export default class Encrypt extends React.PureComponent {
         const iv = window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize));
         let data;
         return Magic.setStateWithPromise(this, { working: true })
-            .then(() => FileUtilities.readFile(file, false))
+            .then(() => {
+                if (file.isCloud) {
+                    return FileUtilities.downloadFile(file.id, file.access_token, false);
+                } else {
+                    return FileUtilities.readFile(file, false);
+                }
+            })
             .then(readFile => { data = readFile.data; })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,

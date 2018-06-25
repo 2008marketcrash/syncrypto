@@ -38,7 +38,13 @@ export default class Decrypt extends React.PureComponent {
     decrypt(file) {
         let data, salt, iv;
         return Magic.setStateWithPromise(this, { working: true })
-            .then(() => FileUtilities.readFile(file, true))
+            .then(() => {
+                if (file.isCloud) {
+                    return FileUtilities.downloadFile(file.id, file.access_token, true);
+                } else {
+                    return FileUtilities.readFile(file, true);
+                }
+            })
             .then(readFile => { data = readFile.data; salt = readFile.salt; iv = readFile.iv; })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,
