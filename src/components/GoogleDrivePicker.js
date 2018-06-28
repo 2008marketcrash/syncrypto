@@ -55,7 +55,7 @@ export default class GoogleDrivePicker extends React.PureComponent {
             scope: Config.googleDrive.scope
         }, (access_token) => {
             if (access_token.error) {
-                this.props.setError(`Error: ${access_token.error}. ${access_token.details}`);
+                this.props.setError(`Error: ${access_token.error}. ${access_token.details || ""}`.trim());
             } else {
                 callback(access_token);
             }
