@@ -34,7 +34,7 @@ export default class Encrypt extends React.PureComponent {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.encrypt(this.props.file);
+        this.encrypt(this.props.inputFile);
     }
 
     scorePassword(password) {
@@ -48,16 +48,16 @@ export default class Encrypt extends React.PureComponent {
         return ((lengthScore + hasUpperCase + hasLowerCase + hasNumbers + hasSymbols) / 8) * 100;
     }
 
-    encrypt(file) {
+    encrypt(inputFile) {
         const salt = window.crypto.getRandomValues(new Uint8Array(Config.key.saltSize));
         const iv = window.crypto.getRandomValues(new Uint8Array(Config.algorithm.ivSize));
         let data;
         return Magic.setStateWithPromise(this, { working: true })
             .then(() => {
-                if (file.isCloud) {
-                    return FileUtilities.downloadFile(file.id, file.access_token, false);
+                if (inputFile.isCloud) {
+                    return FileUtilities.downloadFile(inputFile.id, inputFile.access_token, false);
                 } else {
-                    return FileUtilities.readFile(file, false);
+                    return FileUtilities.readFile(inputFile, false);
                 }
             })
             .then(readFile => { data = readFile.data; })
@@ -94,7 +94,7 @@ export default class Encrypt extends React.PureComponent {
                 key,
                 data
             ))
-            .then(encryptedFile => FileUtilities.saveFile(`${file.name}.${Config.fileExtension}`, encryptedFile, salt, iv))
+            .then(encryptedFile => FileUtilities.saveFile(`${inputFile.name}.${Config.fileExtension}`, encryptedFile, salt, iv))
             .then(() => this.props.selectFile(null))
             .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
             .then(() => Magic.setStateWithPromise(this, { working: false }));
@@ -104,7 +104,7 @@ export default class Encrypt extends React.PureComponent {
         const { showPassword, working } = this.state;
         const passwordScore = this.scorePassword(this.state.password);
         const passwordCheck = showPassword || this.state.password === this.state.retypePassword;
-        if (this.props.file) {
+        if (this.props.inputFile) {
             if (working) {
                 return <div>
                     <h4 className="mb-4">Encrypting...</h4>

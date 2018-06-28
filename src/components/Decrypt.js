@@ -32,17 +32,17 @@ export default class Decrypt extends React.PureComponent {
 
     handleSubmit(event) {
         event.preventDefault();
-        this.decrypt(this.props.file);
+        this.decrypt(this.props.inputFile);
     }
 
-    decrypt(file) {
+    decrypt(inputFile) {
         let data, salt, iv;
         return Magic.setStateWithPromise(this, { working: true })
             .then(() => {
-                if (file.isCloud) {
-                    return FileUtilities.downloadFile(file.id, file.access_token, true);
+                if (inputFile.isCloud) {
+                    return FileUtilities.downloadFile(inputFile.id, inputFile.access_token, true);
                 } else {
-                    return FileUtilities.readFile(file, true);
+                    return FileUtilities.readFile(inputFile, true);
                 }
             })
             .then(readFile => { data = readFile.data; salt = readFile.salt; iv = readFile.iv; })
@@ -79,7 +79,7 @@ export default class Decrypt extends React.PureComponent {
                 key,
                 data
             ))
-            .then(decryptedFile => FileUtilities.saveFile(file.name.substring(0, file.name.lastIndexOf(".")) || `decrypted.${Config.fileExtension}`, decryptedFile))
+            .then(decryptedFile => FileUtilities.saveFile(inputFile.name.substring(0, inputFile.name.lastIndexOf(".")) || `decrypted.${Config.fileExtension}`, decryptedFile))
             .then(() => this.props.selectFile(null))
             .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
             .then(() => Magic.setStateWithPromise(this, { working: false }));
@@ -87,7 +87,7 @@ export default class Decrypt extends React.PureComponent {
 
     render() {
         const { showPassword, working } = this.state;
-        if (this.props.file) {
+        if (this.props.inputFile) {
             if (working) {
                 return <div>
                     <h4 className="mb-4">Decrypting...</h4>
