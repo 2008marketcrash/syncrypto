@@ -96,8 +96,8 @@ export default class Decrypt extends React.PureComponent {
                 </div>;
             } else {
                 return <form onSubmit={this.handleSubmit}>
-                    {this.state.error ? <div className="alert alert-danger">{this.state.error}</div> : null}
                     <h4 className="mb-4">Enter the password you chose.</h4>
+                    {this.state.error ? <div className="mb-4 alert alert-danger">{this.state.error}</div> : null}
                     <div className="input-group">
                         <input required autoFocus autoComplete="off" maxLength={Config.maxPasswordLength} type={showPassword ? "text" : "password"} className="form-control" placeholder="Type password" value={this.state.password} onChange={this.handleChange} name="password" />
                         <div className="input-group-append">

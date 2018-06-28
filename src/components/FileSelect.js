@@ -17,8 +17,8 @@ export default class FileSelect extends React.PureComponent {
         const { file } = this.props;
         const isFileValid = file && file.size <= Config.maxFileSize;
         return <form onSubmit={e => e.preventDefault()}>
-            {this.state.error ? <div className="mb-4 alert alert-danger">{this.state.error}</div> : null}
             <h4 className="mb-4">Simple file encryption for the cloud.</h4>
+            {this.state.error ? <div className="mb-4 alert alert-danger">{this.state.error}</div> : null}
             <div className="input-group mb-4">
                 <div className="col-8 pl-0 pr-2">
                     <div className="custom-file">
