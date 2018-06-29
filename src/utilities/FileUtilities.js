@@ -17,7 +17,7 @@ export default class FileUtilities {
         }
     }
 
-    static readFile(file, withSaltAndIv = false) {
+    static readFileFromDevice(file, withSaltAndIv = false) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.onerror = (error) => { reject(error); };
@@ -47,7 +47,7 @@ export default class FileUtilities {
         };
     }
 
-    static saveFile(fileName, data, salt = [], iv = []) {
+    static downloadFileToDevice(fileName, data, salt = [], iv = []) {
         const url = window.URL.createObjectURL(new Blob([data, salt, iv], { type: "application/octet-stream" }));
         const a = document.createElement("a");
         a.style = "display:none";
@@ -59,7 +59,7 @@ export default class FileUtilities {
         a.remove();
     };
 
-    static downloadFile(file_id, access_token, withSaltAndIv = false) {
+    static downloadFileFromGoogleDrive(file_id, access_token, withSaltAndIv = false) {
         return axios.request({
             method: "GET",
             responseType: "arraybuffer",

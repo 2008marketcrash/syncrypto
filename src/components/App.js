@@ -4,6 +4,8 @@ import { HashRouter, Route, Switch, Redirect, Link } from "react-router-dom";
 import FileSelect from "./FileSelect";
 import Encrypt from "./Encrypt";
 import Decrypt from "./Decrypt";
+import Magic from "../utilities/Magic";
+import Save from "./Save";
 
 export default class App extends React.PureComponent {
     constructor(props) {
@@ -11,12 +13,13 @@ export default class App extends React.PureComponent {
         this.selectFile = this.selectFile.bind(this);
 
         this.state = {
-            inputFile: null
+            inputFile: null,
+            outputFile: null
         };
     }
 
-    selectFile(inputFile) {
-        this.setState({ inputFile });
+    selectFile(inputFile = null, outputFile = null) {
+        return Magic.setStateWithPromise(this, { inputFile, outputFile });
     }
 
     componentDidCatch(error, info) {
@@ -42,9 +45,23 @@ export default class App extends React.PureComponent {
                             </div> :
                             <Switch>
                                 <Redirect exact from="/" to="/file_select" />
-                                <Route exact path="/file_select" render={() => <FileSelect file={this.state.inputFile} selectFile={this.selectFile} />} />
-                                <Route exact path="/encrypt" render={() => <Encrypt file={this.state.inputFile} selectFile={this.selectFile} />} />
-                                <Route exact path="/decrypt" render={() => <Decrypt file={this.state.inputFile} selectFile={this.selectFile} />} />
+                                <Route exact path="/file_select" render={() => <FileSelect
+                                    inputFile={this.state.inputFile}
+                                    outputFile={this.state.outputFile}
+                                    selectFile={this.selectFile} />} />
+                                <Route exact path="/encrypt" render={() => <Encrypt
+                                    inputFile={this.state.inputFile}
+                                    outputFile={this.state.outputFile}
+                                    selectFile={this.selectFile} />} />
+                                <Route exact path="/decrypt" render={() => <Decrypt
+                                    inputFile={this.state.inputFile}
+                                    outputFile={this.state.outputFile}
+                                    selectFile={this.selectFile} />} />
+                                <Route exact path="/save" render={() => <Save
+                                    inputFile={this.state.inputFile}
+                                    outputFile={this.state.outputFile}
+                                    selectFile={this.selectFile} />}
+                                />} />
                                 <Route render={() => <div>
                                     <div className="mb-2"><span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
                                     <div className="mb-4">You&quot;re not supposed to be on this page!</div>

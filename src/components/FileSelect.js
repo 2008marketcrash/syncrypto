@@ -22,13 +22,13 @@ export default class FileSelect extends React.PureComponent {
             <div className="input-group mb-4">
                 <div className="col-8 pl-0 pr-2">
                     <div className="custom-file">
-                        <input type="file" className="custom-file-input" id="file-selector" onChange={e => this.props.selectFile(Array.from(e.target.files)[0])} />
+                        <input type="file" className="custom-file-input" id="file-selector" onChange={e => this.props.selectFile(Array.from(e.target.files)[0], null)} />
                         <label className="custom-file-label text-left text-truncate" htmlFor="file-selector">{inputFile ? inputFile.name : "Choose a file to get started..."}</label>
                     </div>
                 </div>
                 <GoogleDrivePicker
                     setError={(error) => this.setState({ error })}
-                    onPick={this.props.selectFile}
+                    onPick={file => this.props.selectFile(file, null)}
                     className="col-4 pl-2 pr-0 btn btn-outline-primary" />
             </div>
             {inputFile ?

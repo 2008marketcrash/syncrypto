@@ -55,12 +55,12 @@ export default class Encrypt extends React.PureComponent {
         return Magic.setStateWithPromise(this, { working: true })
             .then(() => {
                 if (inputFile.isCloud) {
-                    return FileUtilities.downloadFile(inputFile.id, inputFile.access_token, false);
+                    return FileUtilities.downloadFileFromGoogleDrive(inputFile.id, inputFile.access_token, false);
                 } else {
-                    return FileUtilities.readFile(inputFile, false);
+                    return FileUtilities.readFileFromDevice(inputFile, false);
                 }
             })
-            .then(readFile => { data = readFile.data; })
+            .then(readInputFile => { data = readInputFile.data; })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,
                 new TextEncoder(Config.encoding).encode(btoa(this.state.password)),
@@ -94,8 +94,12 @@ export default class Encrypt extends React.PureComponent {
                 key,
                 data
             ))
-            .then(encryptedFile => FileUtilities.saveFile(`${inputFile.name}.${Config.fileExtension}`, encryptedFile, salt, iv))
-            .then(() => this.props.selectFile(null))
+            .then(encryptedFile => this.props.selectFile(null, {
+                name: `${inputFile.name}.${Config.fileExtension}`,
+                data: encryptedFile,
+                salt,
+                iv
+            }))
             .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
             .then(() => Magic.setStateWithPromise(this, { working: false }));
     }
@@ -104,7 +108,9 @@ export default class Encrypt extends React.PureComponent {
         const { showPassword, working } = this.state;
         const passwordScore = this.scorePassword(this.state.password);
         const passwordCheck = showPassword || this.state.password === this.state.retypePassword;
-        if (this.props.inputFile) {
+        if (this.props.outputFile) {
+            return <Redirect to="/save" />;
+        } else if (this.props.inputFile) {
             if (working) {
                 return <div>
                     <h4 className="mb-4">Encrypting...</h4>

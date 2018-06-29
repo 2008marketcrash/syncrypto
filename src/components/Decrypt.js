@@ -40,12 +40,12 @@ export default class Decrypt extends React.PureComponent {
         return Magic.setStateWithPromise(this, { working: true })
             .then(() => {
                 if (inputFile.isCloud) {
-                    return FileUtilities.downloadFile(inputFile.id, inputFile.access_token, true);
+                    return FileUtilities.downloadFileFromGoogleDrive(inputFile.id, inputFile.access_token, true);
                 } else {
-                    return FileUtilities.readFile(inputFile, true);
+                    return FileUtilities.readFileFromDevice(inputFile, true);
                 }
             })
-            .then(readFile => { data = readFile.data; salt = readFile.salt; iv = readFile.iv; })
+            .then(readInputFile => { data = readInputFile.data; salt = readInputFile.salt; iv = readInputFile.iv; })
             .then(() => window.crypto.subtle.importKey(
                 Config.key.type,
                 new TextEncoder(Config.encoding).encode(btoa(this.state.password)),
@@ -79,15 +79,19 @@ export default class Decrypt extends React.PureComponent {
                 key,
                 data
             ))
-            .then(decryptedFile => FileUtilities.saveFile(inputFile.name.substring(0, inputFile.name.lastIndexOf(".")) || `decrypted.${Config.fileExtension}`, decryptedFile))
-            .then(() => this.props.selectFile(null))
+            .then(decryptedFile => this.props.selectFile(null, {
+                name: inputFile.name.substring(0, inputFile.name.lastIndexOf(".")) || `decrypted.${Config.fileExtension}`,
+                data: decryptedFile
+            }))
             .catch(error => Magic.setStateWithPromise(this, { error: error.toString() }))
             .then(() => Magic.setStateWithPromise(this, { working: false }));
     }
 
     render() {
         const { showPassword, working } = this.state;
-        if (this.props.inputFile) {
+        if (this.props.outputFile) {
+            return <Redirect to="/save" />;
+        } else if (this.props.inputFile) {
             if (working) {
                 return <div>
                     <h4 className="mb-4">Decrypting...</h4>
