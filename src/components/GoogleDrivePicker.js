@@ -66,9 +66,9 @@ export default class GoogleDrivePicker extends React.PureComponent {
         new window.google.picker.PickerBuilder()
             .addView(window.google.picker.ViewId.DOCS)
             .setOAuthToken(access_token)
+            .setAppId(Config.googleDrive.appId)
             .setDeveloperKey(Config.googleDrive.developerKey)
             .setCallback(data => this.pickerCallback(data, access_token))
-            .setOrigin(window.location.origin)
             .enableFeature(window.google.picker.Feature.NAV_HIDDEN)
             .build()
             .setVisible(true);
