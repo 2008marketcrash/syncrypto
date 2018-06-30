@@ -2,16 +2,22 @@ import React from "react";
 import Config from "../utilities/Config";
 import { Redirect, Link } from "react-router-dom";
 import FileUtilities from "../utilities/FileUtilities";
+import GoogleApi from "../utilities/GoogleApi";
 
 export default class Save extends React.Component {
     constructor(props) {
         super(props);
+        this.setMessage = this.setMessage.bind(this);
         this.download = this.download.bind(this);
         this.saveToGoogleDrive = this.saveToGoogleDrive.bind(this);
 
         this.state = {
-            error: ""
+            message: null
         };
+    }
+
+    setMessage(text, isInfo = false) {
+        this.setState({ message: { text, isInfo } });
     }
 
     download() {
@@ -24,7 +30,33 @@ export default class Save extends React.Component {
     }
 
     saveToGoogleDrive() {
-        console.log("To do.");
+        if (GoogleApi.isReady()) {
+            this.setMessage("Google API not loaded!");
+        } else {
+            const token = GoogleApi.token();
+            if (token && token.access_token) {
+                FileUtilities.uploadFileToGoogleDrive(
+                    token.access_token,
+                    this.setMessage,
+                    this.props.outputFile.name,
+                    this.props.outputFile.data,
+                    this.props.outputFile.salt,
+                    this.props.outputFile.iv
+                );
+            } else {
+                // We must call "saveToGoogleDrive" instead of "FileUtilities.uploadFileToGoogleDrive" because of:
+                // https://github.com/google/google-api-javascript-client/issues/409
+                GoogleApi.authenticate(this.saveToGoogleDrive, this.setMessage);
+            }
+        }
+    }
+
+    componentDidMount() {
+        if (GoogleApi.isApiReady()) {
+            GoogleApi.onApiLoad();
+        } else {
+            this.setMessage("Google API not loaded!");
+        }
     }
 
     render() {
@@ -32,7 +64,7 @@ export default class Save extends React.Component {
             const encrypted = this.props.outputFile.name.endsWith(`.${Config.fileExtension}`);
             return <div>
                 <h4 className="mb-4">Your file has been {encrypted ? "encrypted" : "decrypted"}! &#127881;</h4>
-                {this.state.error ? <div className="mb-4 alert alert-danger">{this.state.error}</div> : null}
+                {this.state.message ? <div className={`mb-4 alert alert-${this.state.message.isInfo ? "info" : "danger"}`}>{this.state.message.text}</div> : null}
                 <div className="mb-4">
                     <button onClick={this.download} className="btn btn-success mr-2">Download</button>
                     <button onClick={this.saveToGoogleDrive} className="btn btn-outline-primary">Save to Google Drive™</button>
@@ -43,7 +75,7 @@ export default class Save extends React.Component {
                         <button className="btn btn-dark mr-2">Start over</button>
                     </Link>
                 </div>
-            </div>;
+            </div >;
         } else {
             return <Redirect to="/" />;
         }

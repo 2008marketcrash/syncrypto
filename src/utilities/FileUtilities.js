@@ -47,7 +47,7 @@ export default class FileUtilities {
         };
     }
 
-    static downloadFileToDevice(fileName, data, salt = [], iv = []) {
+    static downloadFileToDevice(fileName, data, salt = new ArrayBuffer(), iv = new ArrayBuffer()) {
         const url = window.URL.createObjectURL(new Blob([data, salt, iv], { type: "application/octet-stream" }));
         const a = document.createElement("a");
         a.style = "display:none";
@@ -75,5 +75,28 @@ export default class FileUtilities {
                 };
             }
         })
+    }
+
+    static uploadFileToGoogleDrive(access_token, setMessage, fileName, data, salt = new ArrayBuffer(), iv = new ArrayBuffer()) {
+        setMessage("Starting upload to Google Drive™. Do not close this window.", true);
+        return axios.request({
+            method: "POST",
+            url: `https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable`,
+            headers: {
+                "Authorization": `Bearer ${access_token}`,
+                "X-Upload-Content-Length": data.byteLength + salt.byteLength + iv.byteLength
+            },
+            data: { name: fileName, description: "File uploaded using Syncrypto (https://github.com/theapurvap/syncrypto)." }
+        }).then(response => axios.request({
+            method: "POST",
+            url: response.headers.location,
+            headers: {
+                "Authorization": `Bearer ${access_token}`,
+                "Content-Type": "multipart/form-data"
+            },
+            data: new Blob([data, salt, iv])
+        })).then(() => setMessage("File uploaded to Google Drive™!", true)).catch(error => {
+            setMessage(`Failed to upload file (${error.toString()}).`);
+        });
     }
 }
