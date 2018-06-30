@@ -1,65 +1,29 @@
 import React from "react";
 import Config from "../utilities/Config";
+import GoogleApi from "../utilities/GoogleApi";
 
 export default class GoogleDrivePicker extends React.PureComponent {
     constructor(props) {
         super(props);
 
-        this.isGoogleApiReady = this.isGoogleApiReady.bind(this);
-        this.isGoogleAuthReady = this.isGoogleAuthReady.bind(this);
-        this.isGooglePickerReady = this.isGooglePickerReady.bind(this);
-        this.onApiLoad = this.onApiLoad.bind(this);
         this.handleClick = this.handleClick.bind(this);
-        this.authenticate = this.authenticate.bind(this);
         this.createPicker = this.createPicker.bind(this);
         this.pickerCallback = this.pickerCallback.bind(this);
     }
 
-    isGoogleApiReady() {
-        return !!window.gapi;
-    }
-
-    isGoogleAuthReady() {
-        return !!window.gapi.auth;
-    }
-
-    isGooglePickerReady() {
-        return !!window.google.picker;
-    }
-
-    onApiLoad() {
-        window.gapi.load("auth");
-        window.gapi.load("picker");
-    }
-
     handleClick() {
-        if (!this.isGoogleApiReady()
-            || !this.isGoogleAuthReady()
-            || !this.isGooglePickerReady()) {
+        if (GoogleApi.isReady()) {
             this.props.setError("Google API not loaded!");
         } else {
-            const token = window.gapi.auth.getToken();
+            const token = GoogleApi.token();
             if (token && token.access_token) {
                 this.createPicker(token.access_token);
             } else {
                 // We must call "handleClick" instead of "createPicker" because of:
                 // https://github.com/google/google-api-javascript-client/issues/409
-                this.authenticate(this.handleClick);
+                GoogleApi.authenticate(this.handleClick, this.props.setError);
             }
         }
-    }
-
-    authenticate(callback) {
-        window.gapi.auth.authorize({
-            client_id: Config.googleDrive.clientId,
-            scope: Config.googleDrive.scope
-        }, (access_token) => {
-            if (access_token.error) {
-                this.props.setError(`Error: ${access_token.error}. ${access_token.details || ""}`.trim());
-            } else {
-                callback(access_token);
-            }
-        });
     }
 
     createPicker(access_token) {
@@ -92,8 +56,8 @@ export default class GoogleDrivePicker extends React.PureComponent {
     }
 
     componentDidMount() {
-        if (this.isGoogleApiReady()) {
-            this.onApiLoad();
+        if (GoogleApi.isApiReady()) {
+            GoogleApi.onApiLoad();
         } else {
             this.props.setError("Google API not loaded!");
         }
