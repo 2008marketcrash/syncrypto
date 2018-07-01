@@ -67,7 +67,7 @@ export default class Save extends React.Component {
                 {this.state.message ? <div className={`mb-4 alert alert-${this.state.message.isInfo ? "info" : "danger"}`}>{this.state.message.text}</div> : null}
                 <div className="mb-4">
                     <button onClick={this.download} className="btn btn-success mr-2">Download</button>
-                    <button onClick={this.saveToGoogleDrive} className="btn btn-outline-primary">Save to Google Drive™</button>
+                    <button onClick={this.saveToGoogleDrive} className="btn btn-outline-primary">Save to Google Drive&trade;</button>
                 </div>
                 <div className="col-9 mx-auto">
                     <hr className="mb-4" />

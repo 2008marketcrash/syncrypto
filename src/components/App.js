@@ -4,6 +4,8 @@ import { HashRouter, Route, Switch, Redirect, Link } from "react-router-dom";
 import FileSelect from "./FileSelect";
 import Encrypt from "./Encrypt";
 import Decrypt from "./Decrypt";
+import Help from "./Help";
+import Legal from "./Legal";
 import Magic from "../utilities/Magic";
 import Save from "./Save";
 
@@ -35,7 +37,7 @@ export default class App extends React.PureComponent {
                     <nav className="my-2 my-md-0">
                         <Link className="p-2 text-dark" to="/">Home</Link>
                         <a className="p-2 text-dark" target="_blank" href="https://github.com/theapurvap/syncrypto">GitHub</a>
-                        <Link className="p-2 text-dark" to="/faq">FAQ</Link>
+                        <Link className="p-2 text-dark" to="/help">Help</Link>
                         <Link className="p-2 text-dark" to="/legal">Legal</Link>
                     </nav>
                 </div>
@@ -71,9 +73,10 @@ export default class App extends React.PureComponent {
                                     <Route exact path="/save" render={() => <Save
                                         inputFile={this.state.inputFile}
                                         outputFile={this.state.outputFile}
-                                        selectFile={this.selectFile} />}
-                                    />} />
-                                <Route render={() => <div>
+                                        selectFile={this.selectFile} />} />
+                                    <Route exact path="/help" render={() => <Help />} />
+                                    <Route exact path="/legal" render={() => <Legal />} />
+                                    <Route render={() => <div>
                                         <div className="mb-2"><span role="img" aria-label="poop" style={{ fontSize: "2.5rem" }}>&#128169;</span></div>
                                         <div className="mb-4">You&quot;re not supposed to be on this page!</div>
                                         <Link to="/"><button className="btn btn-light">Get outta here!</button></Link>

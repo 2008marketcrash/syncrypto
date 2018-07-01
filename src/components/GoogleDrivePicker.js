@@ -68,7 +68,7 @@ export default class GoogleDrivePicker extends React.PureComponent {
             className={this.props.className}
             onClick={this.handleClick}
             disabled={this.props.disabled}>
-            Google Drive™
+            Google Drive&trade;
         </button>;
     }
 }
