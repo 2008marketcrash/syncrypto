@@ -12,7 +12,7 @@ export default class GoogleDrivePicker extends React.PureComponent {
     }
 
     handleClick() {
-        if (GoogleApi.isReady()) {
+        if (GoogleApi.isNotReady()) {
             this.props.setError("Google API not loaded!");
         } else {
             const token = GoogleApi.token();

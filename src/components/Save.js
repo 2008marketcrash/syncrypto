@@ -21,7 +21,7 @@ export default class Save extends React.Component {
     }
 
     download() {
-        FileUtilities.downloadFileToDevice(
+        FileUtilities.saveFileToDevice(
             this.props.outputFile.name,
             this.props.outputFile.data,
             this.props.outputFile.salt,
@@ -30,7 +30,7 @@ export default class Save extends React.Component {
     }
 
     saveToGoogleDrive() {
-        if (GoogleApi.isReady()) {
+        if (GoogleApi.isNotReady()) {
             this.setMessage("Google API not loaded!");
         } else {
             const token = GoogleApi.token();
@@ -66,7 +66,7 @@ export default class Save extends React.Component {
                 <h4 className="mb-4">Your file has been {encrypted ? "encrypted" : "decrypted"}! &#127881;</h4>
                 {this.state.message ? <div className={`mb-4 alert alert-${this.state.message.isInfo ? "info" : "danger"}`}>{this.state.message.text}</div> : null}
                 <div className="mb-4">
-                    <button onClick={this.download} className="btn btn-success mr-2">Download</button>
+                    <button onClick={this.download} className="btn btn-success mr-2">Save to device</button>
                     <button onClick={this.saveToGoogleDrive} className="btn btn-outline-primary">Save to Google Drive&trade;</button>
                 </div>
                 <div className="col-9 mx-auto">

@@ -1,7 +1,7 @@
 import Config from "./Config";
 
 export default class GoogleApi {
-    static isReady() {
+    static isNotReady() {
         return !GoogleApi.isApiReady() || !GoogleApi.isAuthReady() || !GoogleApi.isPickerReady();
     }
 

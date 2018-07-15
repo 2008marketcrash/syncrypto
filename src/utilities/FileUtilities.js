@@ -17,6 +17,17 @@ export default class FileUtilities {
         }
     }
 
+    static extractSaltAndIvFromData(data) {
+        const fileSize = data.byteLength;
+        const { saltSize } = Config.key;
+        const { ivSize } = Config.algorithm;
+        return {
+            data: data.slice(0, fileSize - saltSize - ivSize),
+            salt: data.slice(fileSize - saltSize - ivSize, fileSize - ivSize),
+            iv: data.slice(fileSize - ivSize)
+        };
+    }
+
     static readFileFromDevice(file, withSaltAndIv = false) {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -36,18 +47,7 @@ export default class FileUtilities {
         });
     }
 
-    static extractSaltAndIvFromData(data) {
-        const fileSize = data.byteLength;
-        const { saltSize } = Config.key;
-        const { ivSize } = Config.algorithm;
-        return {
-            data: data.slice(0, fileSize - saltSize - ivSize),
-            salt: data.slice(fileSize - saltSize - ivSize, fileSize - ivSize),
-            iv: data.slice(fileSize - ivSize)
-        };
-    }
-
-    static downloadFileToDevice(fileName, data, salt = new ArrayBuffer(), iv = new ArrayBuffer()) {
+    static saveFileToDevice(fileName, data, salt = new ArrayBuffer(), iv = new ArrayBuffer()) {
         const url = window.URL.createObjectURL(new Blob([data, salt, iv], { type: "application/octet-stream" }));
         const a = document.createElement("a");
         a.style = "display:none";
