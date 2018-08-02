@@ -18,7 +18,7 @@ export default class FileSelect extends React.PureComponent {
         const isFileValid = inputFile && inputFile.size <= Config.maxFileSize;
         return <form onSubmit={e => e.preventDefault()}>
             <h4 className="mb-4">Simple and accessible file encryption.</h4>
-            {this.state.error ? <div className="mb-4 alert alert-danger">{this.state.error}</div> : null}
+            {this.state.error ? <div className="mb-4 alert alert-danger" style={{ wordBreak: "break-word" }}>{this.state.error}</div> : null}
             <div className="input-group mb-4">
                 <div className="col-8 pl-0 pr-2">
                     <div className="custom-file">
@@ -54,7 +54,7 @@ export default class FileSelect extends React.PureComponent {
                                 <button type="submit" className="btn btn-primary">Decrypt</button>
                             </Link>
                         </div> :
-                        <div className="alert alert-danger">The selected file is too big. The maximum allowed file size is {FileUtilities.sizeString(Config.maxFileSize)}. Please try a smaller file.</div>}
+                        <div className="alert alert-danger" style={{ wordBreak: "break-word" }}>The selected file is too big. The maximum allowed file size is {FileUtilities.sizeString(Config.maxFileSize)}. Please try a smaller file.</div>}
                 </React.Fragment>
                 : null}
         </form>;

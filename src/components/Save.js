@@ -64,7 +64,7 @@ export default class Save extends React.Component {
             const encrypted = this.props.outputFile.name.endsWith(`.${Config.fileExtension}`);
             return <div>
                 <h4 className="mb-4">Your file has been {encrypted ? "encrypted" : "decrypted"}! &#127881;</h4>
-                {this.state.message ? <div className={`mb-4 alert alert-${this.state.message.isInfo ? "info" : "danger"}`}>{this.state.message.text}</div> : null}
+                {this.state.message ? <div className={`mb-4 alert alert-${this.state.message.isInfo ? "info" : "danger"}`} style={{ wordBreak: "break-word" }}>{this.state.message.text}</div> : null}
                 <div className="mb-4">
                     <button onClick={this.download} className="btn btn-success mr-2">Save to device</button>
                     <button onClick={this.saveToGoogleDrive} className="btn btn-outline-primary">Save to Google Drive&trade;</button>

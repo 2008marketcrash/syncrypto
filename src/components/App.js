@@ -53,7 +53,7 @@ export default class App extends React.PureComponent {
                         <div className="col-lg-6">
                             {this.state.error ?
                                 <div>
-                                    <div className="alert alert-danger mb-4">{this.state.error}</div>
+                                    <div className="alert alert-danger mb-4" style={{ wordBreak: "break-word" }}>{this.state.error}</div>
                                     <pre className="bg-light rounded p-3 text-danger text-left">{this.state.stack}</pre>
                                 </div> :
                                 <Switch>
