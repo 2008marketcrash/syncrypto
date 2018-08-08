@@ -78,7 +78,7 @@ export default class FileUtilities {
     }
 
     static uploadFileToGoogleDrive(access_token, setMessage, fileName, data, salt = new ArrayBuffer(), iv = new ArrayBuffer()) {
-        setMessage("Starting upload to Google Drive&trade;. Do not close this window.", true);
+        setMessage("Starting upload to Google Drive\u2122. Do not close this window.", true);
         return axios.request({
             method: "POST",
             url: `https://www.googleapis.com/upload/drive/v3/files?uploadType=resumable`,
@@ -95,7 +95,7 @@ export default class FileUtilities {
                 "Content-Type": "multipart/form-data"
             },
             data: new Blob([data, salt, iv])
-        })).then(() => setMessage("File uploaded to Google Drive&trade;!", true)).catch(error => {
+        })).then(() => setMessage("File uploaded to Google Drive\u2122!", true)).catch(error => {
             setMessage(`Failed to upload file (${error.toString()}).`);
         });
     }
