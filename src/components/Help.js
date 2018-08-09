@@ -18,6 +18,10 @@ export default class Help extends React.Component {
                     <div className="text-secondary">This tool uses the AES GCM 256 implementation provided by <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Crypto_API">Web Crypto</a>. All the work is done right in your browser. Take a look at the <a href="https://github.com/theapurvap/syncrypto">source code</a> if you have questions about the specifics.</div>
                 </div>
                 <div className="mb-4">
+                    <div className="text-dark">What type of files are supported?</div>
+                    <div className="text-secondary">Only binary files are supported at this moment (basically everything except Google Docs format). Working on fixing that! If you think you can help, head over to the <a href="https://github.com/theapurvap/syncrypto">repository</a> and submit a pull request!</div>
+                </div>
+                <div className="mb-4">
                     <div className="text-dark">I see "Error: idpiframe_initialization_failed. Cookies are not enabled in current environment." when I try to connect to Google Drive&trade;.</div>
                     <div className="text-secondary">You need to enable 3rd party cookies in your browser for the Google API to work properly.</div>
                 </div>
