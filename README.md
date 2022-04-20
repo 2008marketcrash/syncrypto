@@ -1,4 +1,4 @@
 # syncrypto
 Simple and accessible file encryption.
 
-Try it out yourself: https://theapurvap.github.io/syncrypto/
+Try it out yourself: https://apurpate.github.io/syncrypto/
