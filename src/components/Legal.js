@@ -7,12 +7,12 @@ export default class Legal extends React.Component {
             <div className="text-left">
                 <div className="mb-4">
                     <h5 className="text-dark">License</h5>
-                    <p className="text-secondary">This tool is licensed as <a href="https://github.com/theapurvap/syncrypto/blob/master/LICENSE">Apache 2</a>.</p>
+                    <p className="text-secondary">This tool is licensed as <a href="https://github.com/apurpate/syncrypto/blob/master/LICENSE">Apache 2</a>.</p>
                 </div>
                 <div className="mb-4">
                     <h5 className="text-dark">Privacy Policy</h5>
                     <div className="text-secondary">
-                        <p>Your privacy is important to us. It is Syncrypto's policy to respect your privacy regarding any information we may collect from you across our website, <a href="https://theapurvap.github.io/syncrypto/">https://theapurvap.github.io/syncrypto/</a>, and other sites we own and operate.</p>
+                        <p>Your privacy is important to us. It is Syncrypto's policy to respect your privacy regarding any information we may collect from you across our website, <a href="https://apurpate.github.io/syncrypto/">https://apurpate.github.io/syncrypto/</a>, and other sites we own and operate.</p>
                         <p>We only ask for personal information when we truly need it to provide a service to you. We collect it by fair and lawful means, with your knowledge and consent. We also let you know why we’re collecting it and how it will be used.</p>
                         <p>We only retain collected information for as long as necessary to provide you with your requested service. What data we store, we’ll protect within commercially acceptable means to prevent loss and theft, as well as unauthorised access, disclosure, copying, use or modification.</p>
                         <p>We don’t share any personally identifying information publicly or with third-parties, except when required to by law.</p>
@@ -26,7 +26,7 @@ export default class Legal extends React.Component {
                     <h5 className="text-dark">Terms of Service</h5>
                     <div className="text-secondary">
                         <p>1. Terms</p>
-                        <p>By accessing the website at <a href="https://theapurvap.github.io/syncrypto/">https://theapurvap.github.io/syncrypto/</a>, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.</p>
+                        <p>By accessing the website at <a href="https://apurpate.github.io/syncrypto/">https://apurpate.github.io/syncrypto/</a>, you are agreeing to be bound by these terms of service, all applicable laws and regulations, and agree that you are responsible for compliance with any applicable local laws. If you do not agree with any of these terms, you are prohibited from using or accessing this site. The materials contained in this website are protected by applicable copyright and trademark law.</p>
                         <p>2. Use License</p>
                         <ol type="a">
                             <li>Permission is granted to temporarily download one copy of the materials (information or software) on Syncrypto's website for personal, non-commercial transitory viewing only. This is the grant of a license, not a transfer of title, and under this license you may not:

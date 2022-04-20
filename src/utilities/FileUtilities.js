@@ -86,7 +86,7 @@ export default class FileUtilities {
                 "Authorization": `Bearer ${access_token}`,
                 "X-Upload-Content-Length": data.byteLength + salt.byteLength + iv.byteLength
             },
-            data: { name: fileName, description: "File uploaded using Syncrypto (https://github.com/theapurvap/syncrypto)." }
+            data: { name: fileName, description: "File uploaded using Syncrypto (https://github.com/apurpate/syncrypto)." }
         }).then(response => axios.request({
             method: "POST",
             url: response.headers.location,

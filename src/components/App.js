@@ -36,7 +36,7 @@ export default class App extends React.PureComponent {
                     <h5 className="ml-2 my-0 mr-md-auto font-weight-normal text-dark">Syncrypto</h5>
                     <nav className="my-2 my-md-0">
                         <Link className="p-2 text-dark" to="/">Home</Link>
-                        <a className="p-2 text-dark" target="_blank" href="https://github.com/theapurvap/syncrypto">GitHub</a>
+                        <a className="p-2 text-dark" target="_blank" href="https://github.com/apurpate/syncrypto">GitHub</a>
                         <Link className="p-2 text-dark" to="/help">Help</Link>
                         <Link className="p-2 text-dark" to="/legal">Legal</Link>
                     </nav>
@@ -45,9 +45,9 @@ export default class App extends React.PureComponent {
                     <h1 className="mt-5 mb-4" style={{ fontSize: "4rem" }}>
                         <FaCloud className="text-dark" />
                         &nbsp;
-                    <FaHeart className="text-danger" style={{ fontSize: "1.5rem" }} />
+                        <FaHeart className="text-danger" style={{ fontSize: "1.5rem" }} />
                         &nbsp;
-                    <FaLock className="text-dark" />
+                        <FaLock className="text-dark" />
                     </h1>
                     <div className="row justify-content-center mb-4">
                         <div className="col-lg-6">
