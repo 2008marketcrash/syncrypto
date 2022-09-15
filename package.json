@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "dependencies": {
         "axios": "^0.21.2",
-        "bootstrap": "^4.1.0",
+        "bootstrap": "^4.3.1",
         "gh-pages": "^1.2.0",
         "react": "^16.3.2",
         "react-dom": "^16.3.2",
